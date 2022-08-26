@@ -1,10 +1,13 @@
-package com.musala.droneproject.drone;
+package com.musala.droneproject.service;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.musala.droneproject.model.Drone;
+import com.musala.droneproject.repository.DroneRepository;
 
 @Service
 public class DroneService
