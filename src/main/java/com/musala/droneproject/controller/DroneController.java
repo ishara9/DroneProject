@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musala.droneproject.model.Drone;
+import com.musala.droneproject.model.dto.DroneDTO;
 import com.musala.droneproject.service.DroneService;
 
 @RestController
@@ -48,14 +49,14 @@ public class DroneController
   }
 
   /**
-   * Task1: Register a drone
+   * Task1: Register a droneDTO
    *
-   * @param drone
+   * @param droneDTO
    */
   @PostMapping
-  public ResponseEntity<Drone> registerNewDrone(@RequestBody Drone drone)
+  public ResponseEntity<Drone> registerNewDrone(@RequestBody DroneDTO droneDTO)
   {
-    return new ResponseEntity<>(droneService.registerNewDrone(drone), HttpStatus.CREATED);
+    return new ResponseEntity<>(droneService.registerNewDrone(droneDTO), HttpStatus.CREATED);
   }
 
   @GetMapping("/{droneId}/battery")
