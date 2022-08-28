@@ -2,14 +2,19 @@ package com.musala.droneproject.model;
 
 import java.util.Arrays;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table
@@ -25,6 +30,7 @@ public class Medication
       strategy = GenerationType.SEQUENCE,
       generator = "medication_sequence"
   )
+  @Column( updatable = false )
   private Long id;
 
   private String name;
@@ -33,15 +39,20 @@ public class Medication
 
   private String code;
 
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "medication_id", referencedColumnName = "id")
+  @JsonIgnore
+  private Drone drone;
+
   @Lob
   @Column
-  private Byte[] image;
+  private byte[] image;
 
   public Medication()
   {
   }
 
-  public Medication(Long id, String name, Double weight, String code, Byte[] image)
+  public Medication(Long id, String name, Double weight, String code, byte[] image)
   {
     this.id = id;
     this.name = name;
@@ -50,19 +61,12 @@ public class Medication
     this.image = image;
   }
 
-  public Medication(String name, Double weight, String code, Byte[] image)
+  public Medication(String name, Double weight, String code, byte[] image)
   {
     this.name = name;
     this.weight = weight;
     this.code = code;
     this.image = image;
-  }
-
-  @Override
-  public String toString()
-  {
-    return "Medication{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", weight=" + weight + ", code='" + code
-        + '\'' + ", image=" + Arrays.toString(image) + '}';
   }
 
   public String getName()
@@ -95,13 +99,31 @@ public class Medication
     this.code = code;
   }
 
-  public Byte[] getImage()
+  public byte[] getImage()
   {
     return image;
   }
 
-  public void setImage(Byte[] image)
+  public void setImage(byte[] image)
   {
     this.image = image;
   }
+
+  public Drone getDrone()
+  {
+    return drone;
+  }
+
+  public void setDrone(Drone drone)
+  {
+    this.drone = drone;
+  }
+
+  @Override
+  public String toString()
+  {
+    return "Medication{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", weight=" + weight + ", code='" + code
+        + '\'' + ", image=" + Arrays.toString(image) + '}';
+  }
+
 }

@@ -1,5 +1,7 @@
 package com.musala.droneproject.model;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -7,11 +9,18 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table
+@Table(
+    uniqueConstraints =
+        {
+            @UniqueConstraint(name = "serial_number_unique", columnNames = "serialNumber")
+        }
+)
 public class Drone
 {
   @Id
@@ -24,6 +33,7 @@ public class Drone
       strategy = GenerationType.SEQUENCE,
       generator = "drone_sequence"
   )
+  @Column( updatable = false )
   private Long id;
 
   @Column(length = 100)
@@ -34,10 +44,13 @@ public class Drone
 
   private Double weightLimit;
 
-  private Double batteryCapacity;
+  private Integer batteryCapacity;
 
   @Enumerated(EnumType.ORDINAL)
   private DroneState state;
+
+  @OneToMany(mappedBy = "drone")
+  private Set<Medication> medications;
 
   public Drone()
   {
@@ -47,7 +60,7 @@ public class Drone
                String serialNumber,
                DroneModel model,
                Double weightLimit,
-               Double batteryCapacity,
+               Integer batteryCapacity,
                DroneState state)
   {
     this.id = id;
@@ -61,7 +74,7 @@ public class Drone
   public Drone(String serialNumber,
                DroneModel model,
                Double weightLimit,
-               Double batteryCapacity,
+               Integer batteryCapacity,
                DroneState state)
   {
     this.serialNumber = serialNumber;
@@ -111,12 +124,12 @@ public class Drone
     this.weightLimit = weightLimit;
   }
 
-  public Double getBatteryCapacity()
+  public Integer getBatteryCapacity()
   {
     return batteryCapacity;
   }
 
-  public void setBatteryCapacity(Double batteryCapacity)
+  public void setBatteryCapacity(Integer batteryCapacity)
   {
     this.batteryCapacity = batteryCapacity;
   }
@@ -131,6 +144,15 @@ public class Drone
     this.state = state;
   }
 
+  public Set<Medication> getMedications()
+  {
+    return medications;
+  }
+
+  public void setMedications(Set<Medication> medications)
+  {
+    this.medications = medications;
+  }
 
   @Override
   public String toString()

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.musala.droneproject.model.Drone;
@@ -25,15 +26,29 @@ public class DroneController
     this.droneService = droneService;
   }
 
-  @GetMapping
-  public List<Drone> getDrones()
+  /**
+   * Task 4: checking available drones for loading
+   * @param state
+   * @return
+   */
+  @GetMapping()
+  public List<Drone> getDrones(@RequestParam(required = false, name = "state") String state)
   {
+    if (state != null && !state.isEmpty() && state.equals("available"))
+    {
+      return droneService.getAvailableDrones();
+    }
     return droneService.getDrones();
   }
 
+  /**
+   * Task1: Register a drone
+   *
+   * @param drone
+   */
   @PostMapping
   public void registerNewDrone(@RequestBody Drone drone)
   {
-      droneService.registerNewDrone(drone);
+    droneService.registerNewDrone(drone);
   }
 }
