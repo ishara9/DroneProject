@@ -3,6 +3,8 @@ package com.musala.droneproject.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,13 +38,13 @@ public class DroneController
    * @return
    */
   @GetMapping()
-  public List<Drone> getDrones(@RequestParam(required = false, name = "state") String state)
+  public ResponseEntity<List<Drone>> getDrones(@RequestParam(required = false, name = "state") String state)
   {
-    if (state != null && !state.isEmpty() && state.equals("available"))
+    if (state != null && state.equals("available"))
     {
-      return droneService.getAvailableDrones();
+      return new ResponseEntity<>(droneService.getAvailableDrones(), HttpStatus.OK);
     }
-    return droneService.getDrones();
+    return new ResponseEntity<>(droneService.getDrones(), HttpStatus.OK);
   }
 
   /**
@@ -51,15 +53,15 @@ public class DroneController
    * @param drone
    */
   @PostMapping
-  public void registerNewDrone(@RequestBody Drone drone)
+  public ResponseEntity<Drone> registerNewDrone(@RequestBody Drone drone)
   {
-    droneService.registerNewDrone(drone);
+    return new ResponseEntity<>(droneService.registerNewDrone(drone), HttpStatus.CREATED);
   }
 
   @GetMapping("/{droneId}/battery")
-  public Integer getBatteryLevel(@PathVariable Long droneId)
+  public ResponseEntity<Integer> getBatteryLevel(@PathVariable Long droneId)
   {
-    return droneService.getBatteryLevelById(droneId);
+    return new ResponseEntity<>(droneService.getBatteryLevelById(droneId), HttpStatus.OK);
   }
 
   /**
@@ -69,8 +71,9 @@ public class DroneController
    * @param ids
    */
   @PutMapping(value = "/{droneId}", params = "ids")
-  public void loadDroneWithMedications(@PathVariable Long droneId, @RequestParam List<Long> ids)
+  public ResponseEntity<Boolean> loadDroneWithMedications(@PathVariable Long droneId, @RequestParam List<Long> ids)
   {
-    droneService.loadDroneWithMedications(droneId, ids);
+    boolean isLoaded = droneService.loadDroneWithMedications(droneId, ids);
+    return new ResponseEntity<>(isLoaded, isLoaded ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
   }
 }

@@ -3,6 +3,8 @@ package com.musala.droneproject.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,13 +34,14 @@ public class MedicationController
    * @return
    */
   @GetMapping(path = { "/", "/{droneId}" })
-  public List<Medication> getMedications(@PathVariable @RequestParam(required = false, name = "droneId") Long droneId)
+  public ResponseEntity<List<Medication>> getMedications(
+      @PathVariable @RequestParam(required = false, name = "droneId") Long droneId)
   {
     if (droneId != null)
     {
-      return medicationService.findMedicationByDroneId(droneId);
+      return new ResponseEntity<>(medicationService.findMedicationByDroneId(droneId), HttpStatus.OK);
     }
-    return medicationService.getMedications();
+    return new ResponseEntity<>(medicationService.getMedications(), HttpStatus.OK);
   }
 
 }

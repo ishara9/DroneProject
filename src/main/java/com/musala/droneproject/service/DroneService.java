@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.transaction.Transactional;
 
@@ -27,8 +25,6 @@ public class DroneService
 
   private final MedicationRepository medicationRepository;
 
-  ExecutorService executorService = Executors.newFixedThreadPool(10);
-
   @Autowired
   public DroneService(DroneRepository droneRepository, MedicationRepository medicationRepository)
   {
@@ -41,7 +37,7 @@ public class DroneService
     return droneRepository.findAll();
   }
 
-  public void registerNewDrone(Drone drone)
+  public Drone registerNewDrone(Drone drone)
   {
     Optional<Drone> droneBySerialNumber = droneRepository.findDroneBySerialNumber(drone.getSerialNumber());
     if (droneBySerialNumber.isPresent())
@@ -52,7 +48,7 @@ public class DroneService
     {
       throw new IllegalStateException("Drone's max weight has exceeded 500gr!");
     }
-    droneRepository.save(drone);
+    return droneRepository.save(drone);
   }
 
   public List<Drone> getAvailableDrones()
@@ -69,7 +65,7 @@ public class DroneService
   }
 
   @Transactional
-  public void loadDroneWithMedications(Long droneId, List<Long> medicationIds)
+  public boolean loadDroneWithMedications(Long droneId, List<Long> medicationIds)
   {
     Optional<Drone> optionalDrone = droneRepository.findById(droneId);
     if (optionalDrone.isPresent())
@@ -98,7 +94,9 @@ public class DroneService
       //Drone Operation
       medicationList.forEach(medication -> medication.setDrone(drone));
       drone.setState(DroneState.LOADED);
+      return true;
     }
+    return false;
   }
 
   private Double getDroneCurrentTotalWeight(List<Medication> medicationList)
