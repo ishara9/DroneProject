@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,8 @@ public class DroneController
 
   /**
    * Task 4: checking available drones for loading
+   * <p> It has been assumed that drone in IDLE and LOADED state are, only available for loading </p>
+   *
    * @param state
    * @return
    */
@@ -50,5 +54,23 @@ public class DroneController
   public void registerNewDrone(@RequestBody Drone drone)
   {
     droneService.registerNewDrone(drone);
+  }
+
+  @GetMapping("/{droneId}/battery")
+  public Integer getBatteryLevel(@PathVariable Long droneId)
+  {
+    return droneService.getBatteryLevelById(droneId);
+  }
+
+  /**
+   * Task 2: loading a drone with medication items
+   *
+   * @param droneId
+   * @param ids
+   */
+  @PutMapping(value = "/{droneId}", params = "ids")
+  public void loadDroneWithMedications(@PathVariable Long droneId, @RequestParam List<Long> ids)
+  {
+    droneService.loadDroneWithMedications(droneId, ids);
   }
 }

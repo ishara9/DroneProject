@@ -1,10 +1,5 @@
 package com.musala.droneproject.configuration;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 
 import org.springframework.boot.CommandLineRunner;
@@ -22,37 +17,22 @@ import com.musala.droneproject.repository.MedicationRepository;
 public class DroneConfiguration
 {
   @Bean
-  CommandLineRunner commandLineRunner(DroneRepository repository, MedicationRepository medicationRepository)
+  CommandLineRunner commandLineRunner(DroneRepository droneRepository, MedicationRepository medicationRepository)
   {
-    return args -> {
-      Drone drone1 = new Drone(1L, "234", DroneModel.LIGHT_WEIGHT, 50.0D, 50, DroneState.IDLE);
-      Drone drone2 = new Drone(2L, "567", DroneModel.HEAVY_WEIGHT, 100.0D, 80, DroneState.LOADED);
-      repository.saveAll(Arrays.asList(drone1, drone2));
-
-//      byte[] image = getImage();
-      Medication medication1 = new Medication("med1", 50.0d, "UPERCASE_123", new byte[0]);
-      Medication medication2 = new Medication("med2", 100.0d, "UPERCASE_456", new byte[0]);
-      medicationRepository.saveAll(Arrays.asList(medication1, medication2));
-    };
+    return args -> preLoadData(droneRepository, medicationRepository);
   }
 
-  private byte[] getImage() throws IOException
+  private void preLoadData(DroneRepository droneRepository, MedicationRepository medicationRepository)
   {
-    String image = "src/main/resources/static/medi_pack.png";
-    File imageFile = new File(image);
-    InputStream inStream = new FileInputStream(imageFile);
-    return readInputStream(inStream);
+    Drone drone1 = new Drone(1L, "4CE041230E", DroneModel.LIGHT_WEIGHT, 50.0D, 50, DroneState.IDLE);
+    Drone drone2 = new Drone(2L, "4C3044560F", DroneModel.HEAVY_WEIGHT, 200.0D, 80, DroneState.IDLE);
+    Drone drone3 = new Drone(3L, "6DE046780G", DroneModel.HEAVY_WEIGHT, 200.0D, 100, DroneState.LOADED);
+    Drone drone4 = new Drone(4L, "6EHI046780", DroneModel.HEAVY_WEIGHT, 50.0D, 20, DroneState.LOADED);
+    droneRepository.saveAll(Arrays.asList(drone1, drone2, drone3, drone4));
+
+    Medication medication1 = new Medication("med-123", 50.0d, "MED_123", new byte[0]);
+    Medication medication2 = new Medication("med-245", 100.0d, "MED_456", new byte[0]);
+    medicationRepository.saveAll(Arrays.asList(medication1, medication2));
   }
 
-  private static byte[] readInputStream(InputStream inStream) throws IOException
-  {
-    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-    byte[] buffer = new byte[10240];
-    int len = 0;
-    while ((len = inStream.read(buffer)) != -1) {
-      outStream.write(buffer, 0, len);
-    }
-    inStream.close();
-    return outStream.toByteArray();
-  }
 }
