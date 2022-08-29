@@ -80,6 +80,12 @@ public class DroneServiceImpl implements DroneService
     if (optionalDrone.isPresent())
     {
       Drone drone = optionalDrone.get();
+      if (drone.getBatteryCapacity() <= 25)
+      {
+        throw new IllegalStateException(
+            "Drone's battery Capacity is " + drone.getBatteryCapacity() + ", which is less than 25%");
+      }
+      //Start Loading if battery is adequate
       drone.setState(DroneState.LOADING);
 
       final Double droneWeightLimit = drone.getWeightLimit();
@@ -88,12 +94,6 @@ public class DroneServiceImpl implements DroneService
           getDroneCurrentTotalWeight(new ArrayList<>(drone.getMedications())) + getDroneCurrentTotalWeight(
               medicationList);
 
-      //Validations
-      if (drone.getBatteryCapacity() <= 25)
-      {
-        throw new IllegalStateException(
-            "Drone's battery Capacity is " + drone.getBatteryCapacity() + ", which is less than 25%");
-      }
       if (newTotalWeight > droneWeightLimit)
       {
         throw new IllegalStateException(

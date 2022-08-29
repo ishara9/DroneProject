@@ -36,7 +36,7 @@ public class Drone
   @Column( updatable = false )
   private Long id;
 
-  @Column(length = 100)
+  @Column(columnDefinition = "VARCHAR(100) NOT NULL")
   private String serialNumber;
 
   @Enumerated(EnumType.ORDINAL)
